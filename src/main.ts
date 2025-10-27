@@ -1,10 +1,14 @@
 import { app, ipcMain, net, protocol } from "electron";
-import { EnvironmentInfo, getEnvironmentInfo } from "./lib/env";
+import {
+  EnvironmentInfo,
+  GetEnvironmentInfoOptions,
+  getEnvironmentInfo,
+} from "./lib/env";
 import { newSessionId } from "./lib/session";
 
 export type AptabaseOptions = {
   host?: string;
-};
+} & GetEnvironmentInfoOptions;
 
 // Session expires after 1 hour of inactivity
 const SESSION_TIMEOUT = 1 * 60 * 60;
@@ -12,7 +16,7 @@ let _sessionId = newSessionId();
 let _lastTouched = new Date();
 let _appKey = "";
 let _apiUrl = "";
-let _env: EnvironmentInfo | undefined;
+let systemProps: EnvironmentInfo | undefined;
 
 const _hosts: { [region: string]: string } = {
   US: "https://us.aptabase.com",
@@ -20,6 +24,10 @@ const _hosts: { [region: string]: string } = {
   DEV: "http://localhost:3000",
   SH: "",
 };
+
+export async function loadEnvInfo(options?: GetEnvironmentInfoOptions) {
+  systemProps = await getEnvironmentInfo(app, options);
+}
 
 export async function initialize(
   appKey: string,
@@ -47,7 +55,7 @@ export async function initialize(
 
   const baseUrl = getBaseUrl(parts[1], options);
   _apiUrl = `${baseUrl}/api/v0/event`;
-  _env = await getEnvironmentInfo(app);
+  await loadEnvInfo(options);
   _appKey = appKey;
 
   // some events might be emitted before the initialization is complete
@@ -64,7 +72,7 @@ export function trackEvent(
   eventName: string,
   props?: Record<string, string | number | boolean>
 ): Promise<void> {
-  if (!_appKey || !_env) {
+  if (!_appKey || !systemProps) {
     buffer.push({ eventName, props });
     return Promise.resolve();
   }
@@ -81,16 +89,7 @@ export function trackEvent(
     timestamp: now.toISOString(),
     sessionId: _sessionId,
     eventName: eventName,
-    systemProps: {
-      isDebug: _env.isDebug,
-      locale: _env.locale,
-      osName: _env.osName,
-      osVersion: _env.osVersion,
-      engineName: _env.engineName,
-      engineVersion: _env.engineVersion,
-      appVersion: _env.appVersion,
-      sdkVersion: _env.sdkVersion,
-    },
+    systemProps,
     props: props,
   };
 

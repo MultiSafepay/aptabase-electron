@@ -5,6 +5,11 @@ import { release } from "os";
 
 const sdkVersion = `aptabase-electron@${process.env.PKG_VERSION}`;
 
+export interface GetEnvironmentInfoOptions {
+  version?: string;
+  isDebug?: boolean;
+}
+
 export interface EnvironmentInfo {
   isDebug: boolean;
   locale: string;
@@ -16,12 +21,15 @@ export interface EnvironmentInfo {
   engineVersion: String;
 }
 
-export async function getEnvironmentInfo(app: App): Promise<EnvironmentInfo> {
+export async function getEnvironmentInfo(
+  app: App,
+  options?: GetEnvironmentInfoOptions
+): Promise<EnvironmentInfo> {
   const [osName, osVersion] = await getOperatingSystem();
 
   return {
-    appVersion: app.getVersion(),
-    isDebug: !app.isPackaged,
+    appVersion: options?.version || app.getVersion(),
+    isDebug: options?.isDebug ?? !app.isPackaged,
     locale: app.getLocale(),
     osName,
     osVersion,

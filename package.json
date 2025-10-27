@@ -1,6 +1,6 @@
 {
   "name": "@aptabase/electron",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": false,
   "description": "Electron SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
   "sideEffects": false,
@@ -28,15 +28,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aptabase/aptabase-electron.git"
+    "url": "git+https://github.com/MultiSafepay/aptabase-electron.git"
   },
   "bugs": {
-    "url": "https://github.com/aptabase/aptabase-electron/issues"
+    "url": "https://github.com/MultiSafepay/aptabase-electron/issues"
   },
-  "homepage": "https://github.com/aptabase/aptabase-electron",
+  "homepage": "https://github.com/MultiSafepay/aptabase-electron",
   "license": "MIT",
   "scripts": {
-    "build": "tsup",
+    "prepare": "npm run build",
+    "build": "tsdown",
     "prepublishOnly": "npm run build"
   },
   "files": [
@@ -46,7 +47,7 @@
     "package.json"
   ],
   "devDependencies": {
-    "tsup": "7.2.0",
+    "tsdown": "^0.15.10",
     "typescript": "5.2.2"
   },
   "peerDependencies": {

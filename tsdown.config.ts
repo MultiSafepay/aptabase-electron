@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 const { version } = require("./package.json");
 
 export default defineConfig({
