@@ -1,5 +1,5 @@
-import { defineConfig } from "tsup";
-const { version } = require("./package.json");
+import { defineConfig } from "tsdown";
+import packageJson from "./package.json" with { type: "json" };
 
 export default defineConfig({
   entry: ["src/renderer.ts", "src/main.ts"],
@@ -10,7 +10,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   env: {
-    PKG_VERSION: version,
+    PKG_VERSION: packageJson.version,
   },
   outExtension({ format }) {
     return {
