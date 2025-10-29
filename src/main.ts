@@ -26,7 +26,14 @@ const _hosts: { [region: string]: string } = {
 };
 
 export async function loadEnvInfo(options?: GetEnvironmentInfoOptions) {
-  systemProps = await getEnvironmentInfo(app, options);
+  const newProps = await getEnvironmentInfo(app, options);
+  // if we updated the app version, we need a new session id to ensure we have up to date data
+  // but we don't want to do it if there was no previous appVersion
+  if (newProps.appVersion && newProps.appVersion !== systemProps?.appVersion) {
+    _sessionId = newSessionId();
+  }
+
+  systemProps = newProps;
 }
 
 export async function initialize(
